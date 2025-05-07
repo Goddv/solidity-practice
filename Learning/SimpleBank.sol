@@ -5,9 +5,9 @@ contract getBank {
     mapping (address => uint) public balanceOf;
 
     //Not needed, just a remainder how it works
-    function getBalance(address _addr) public view returns (uint balance){
-        balance = balanceOf[_addr];
-    }
+    //function getBalance(address _addr) public view returns (uint balance){
+    //    balance = balanceOf[_addr];
+    //}
 
     //Deposit basic
     function depositFunds() public payable {
@@ -16,8 +16,8 @@ contract getBank {
     }
 
     //Withdraw basic
-    function withdrawFunds(uint amount) public payable {
-        require (balanceOf[msg.sender] >= amount, "Can't withdraw more than you own");
+    function withdrawFunds(uint amount) public {
+        require(balanceOf[msg.sender] >= amount, "Can't withdraw more than you own");
         balanceOf[msg.sender] -= amount;
         payable(msg.sender).transfer(amount);
     }
