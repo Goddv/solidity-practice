@@ -4,7 +4,6 @@ pragma solidity >=0.4.23 <0.9.0;
 contract SimpleWallet {
     //Initialize owner's public adress, map adresses and allowance;
     address public owner;
-    mapping (address => uint) private balances;
     mapping (address => bool) public hasAccess;
 
     //Make deployer an owner of contract
@@ -40,33 +39,32 @@ contract SimpleWallet {
         if (hasAccess[_who] == true && _who == owner) {
             return "Owner";
         }
-        else if (hasAccess[_who] == true && _who != owner) {
+        else if (hasAccess[_who] != false) {
             return "User with access";
         }
-        else if (!hasAccess[_who]){
+        else {
             return "No access";
         }
     }
 
     //Change owner
-    function changeOwner (address _newOwner) private onlyOwner () {
+    function changeOwner (address _newOwner) public onlyOwner () {
         owner = _newOwner;
     }
 
     //Deposit
     function depositFunds () public payable {
-        balances[msg.sender] += msg.value;
     }
 
     //Withdraw
     function withdrawFunds (uint256 _amount) onlyOwner() public {
         require(hasAccess[msg.sender], "This account doesn't have access.");
-        balances[msg.sender] -= _amount;
+        require(address (this).balance > _amount, "Not enough funds");
         payable(msg.sender).transfer(_amount);
     }
 
     //Get wallet balance
-    function getBalance (address _who) public view returns (uint256) {
-        return balances[_who];
+    function getBalance () public view returns (uint256) {
+        return address(this).balance;
     }
 }
